@@ -30,17 +30,20 @@ func main() {
 	log := logger.DefaultLogger()
 
 	// env init
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal("Failed to read .env", zap.Field{
-			Key:       logger.ErrorField,
-			Type:      zapcore.ErrorType,
-			Interface: err,
-		}, zapcore.Field{
-			Key:    "env",
-			Type:   zapcore.StringType,
-			String: ".env",
-		})
+	runMode := os.Getenv("RUN_MODE")
+	if runMode != "production" {
+		err := godotenv.Load(".env")
+		if err != nil {
+			log.Fatal("Failed to read .env", zap.Field{
+				Key:       logger.ErrorField,
+				Type:      zapcore.ErrorType,
+				Interface: err,
+			}, zapcore.Field{
+				Key:    "env",
+				Type:   zapcore.StringType,
+				String: ".env",
+			})
+		}
 	}
 
 	// runtime ctx

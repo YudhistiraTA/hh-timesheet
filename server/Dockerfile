@@ -1,5 +1,5 @@
 # Builder
-FROM golang:1.20.7-alpine3.17 as builder
+FROM golang:1.22.2-alpine as builder
 
 RUN apk update && apk upgrade && \
     apk --update add git make bash build-base
@@ -21,7 +21,6 @@ WORKDIR /app
 
 EXPOSE 3000
 
-COPY ./.env /app/
 COPY --from=builder /app/engine /app/
 
 CMD /app/engine
