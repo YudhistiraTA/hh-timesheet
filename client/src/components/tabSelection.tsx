@@ -21,7 +21,7 @@ export default function TabSelection() {
 								navigationMenuTriggerStyle(),
 								'font-bold opacity-70 rounded-none',
 								{
-									'opacity-100 text-timesheet-blue border-b-4 hover:text-timesheet-blue border-timesheet-blue':
+									'opacity-100 text-timesheet-blue border-b-4 hover:text-timesheet-blue focus:text-timesheet-blue focus:bg-inherit border-timesheet-blue':
 										pathname === '/',
 								},
 							)}
@@ -36,7 +36,7 @@ export default function TabSelection() {
 								navigationMenuTriggerStyle(),
 								'font-bold opacity-70 rounded-none',
 								{
-									'opacity-100 text-timesheet-blue border-b-4 hover:text-timesheet-blue border-timesheet-blue':
+									'opacity-100 text-timesheet-blue border-b-4 hover:text-timesheet-blue focus:text-timesheet-blue focus:bg-inherit border-timesheet-blue':
 										pathname === '/settings',
 								},
 							)}

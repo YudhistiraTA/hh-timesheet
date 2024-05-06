@@ -14,12 +14,12 @@ export default function UserInfo({ user, ...props }: UserInfoProps) {
 				className={cn('flex items-center gap-16 border-b', props.className)}
 			>
 				<div>
-					<p className="text-muted-foreground">Nama Karyawan</p>
-					<Skeleton className="h-7 w-32" />
+					<p className="text-sm text-muted-foreground">Nama Karyawan</p>
+					<Skeleton className="h-6 w-32" />
 				</div>
 				<div>
-					<p className="text-muted-foreground">Rate</p>
-					<Skeleton className="h-7 w-32" />
+					<p className="text-sm text-muted-foreground">Rate</p>
+					<Skeleton className="h-6 w-32" />
 				</div>
 			</div>
 		)
@@ -29,12 +29,12 @@ export default function UserInfo({ user, ...props }: UserInfoProps) {
 			className={cn('flex items-center gap-16 border-b-4 border-timesheet-background', props.className)}
 		>
 			<div>
-				<p className="text-muted-foreground">Nama Karyawan</p>
-				<p className="text-lg">{user.name}</p>
+				<p className="text-sm text-muted-foreground">Nama Karyawan</p>
+				<p>{user.name}</p>
 			</div>
 			<div>
-				<p className="text-muted-foreground">Rate</p>
-				<p className="text-lg">{moneyFormatter.format(user.rate)}/jam</p>
+				<p className="text-sm text-muted-foreground">Rate</p>
+				<p>{moneyFormatter.format(user.rate)}/jam</p>
 			</div>
 		</div>
 	)

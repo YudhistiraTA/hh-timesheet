@@ -28,16 +28,29 @@ export function SettingsForm({ user }: { user: User }) {
 		mutationFn: putUser,
 		onSuccess: () => {
 			queryClient.invalidateQueries('user')
-      Swal.fire({
-        title: "User Updated!",
-        icon: "success",
-        timer: 2000,
-        timerProgressBar: true,
-        showConfirmButton: false,
-        willClose: () => {
-          clearInterval(2000);
-        }
-      })
+			Swal.fire({
+				title: 'User Updated!',
+				icon: 'success',
+				timer: 2000,
+				timerProgressBar: true,
+				showConfirmButton: false,
+				willClose: () => {
+					clearInterval(2000)
+				},
+			})
+		},
+		onError: () => {
+			Swal.fire({
+				title: 'Error!',
+				text: 'Something went wrong',
+				icon: 'error',
+				timer: 2000,
+				timerProgressBar: true,
+				showConfirmButton: false,
+				willClose: () => {
+					clearInterval(2000)
+				},
+			})
 		},
 	})
 	function onSubmit(data: User) {
