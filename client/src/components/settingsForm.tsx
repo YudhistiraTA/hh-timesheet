@@ -10,13 +10,15 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Skeleton } from '@/components/ui/skeleton'
 import { User, UserSchema } from '@/models/user'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import Swal from 'sweetalert2'
 
-export default function SettingsForm({ user }: { user: User }) {
+export function SettingsForm({ user }: { user: User }) {
 	const form = useForm<User>({
 		resolver: zodResolver(UserSchema),
 		defaultValues: user,
@@ -24,7 +26,19 @@ export default function SettingsForm({ user }: { user: User }) {
 	const queryClient = useQueryClient()
 	const userMutation = useMutation({
 		mutationFn: putUser,
-		onSuccess: () => queryClient.invalidateQueries('user'),
+		onSuccess: () => {
+			queryClient.invalidateQueries('user')
+      Swal.fire({
+        title: "User Updated!",
+        icon: "success",
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        willClose: () => {
+          clearInterval(2000);
+        }
+      })
+		},
 	})
 	function onSubmit(data: User) {
 		userMutation.mutate(data)
@@ -74,5 +88,20 @@ export default function SettingsForm({ user }: { user: User }) {
 				</div>
 			</form>
 		</Form>
+	)
+}
+
+export function SettingsFormSkeleton() {
+	return (
+		<div className="flex flex-col gap-4 w-1/4 bg-white rounded-xl p-8">
+			<Skeleton className="h-5 w-16" />
+			<Skeleton className="h-9 w-full" />
+			<Skeleton className="h-5 w-16" />
+			<Skeleton className="h-9 w-full" />
+			<div className="flex w-full justify-center gap-4">
+				<Skeleton className="w-1/2 h-10" />
+				<Skeleton className="w-1/2 h-10" />
+			</div>
+		</div>
 	)
 }
