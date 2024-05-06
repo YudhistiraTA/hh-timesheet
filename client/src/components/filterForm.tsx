@@ -13,8 +13,8 @@ export default function FilterForm() {
 		queryFn: () => getProjects(),
 	})
 	const [searchParams, setSearchParams] = useSearchParams()
-	const filter = useMemo(
-		() => (searchParams.get('filter') || '').split(','),
+	const projects = useMemo(
+		() => (searchParams.get('projects') || '').split(','),
 		[searchParams],
 	)
 	const options = useMemo(
@@ -31,18 +31,18 @@ export default function FilterForm() {
 	useEffect(() => {
 		if (options)
 			setSelectedOption(
-				options.filter((option) => filter.includes(option.value)),
+				options.filter((option) => projects.includes(option.value)),
 			)
-	}, [options, filter])
+	}, [options, projects])
 
 	function onSubmit() {
-		const filter = (selectedOption?.map((option) => option.value) || []).join(
+		const projects = (selectedOption?.map((option) => option.value) || []).join(
 			',',
 		)
-		setSearchParams({ ...Object.fromEntries(searchParams), filter })
+		setSearchParams({ ...Object.fromEntries(searchParams), projects })
 	}
-	function clearFilter() {
-		setSearchParams({ ...Object.fromEntries(searchParams), filter: '' })
+	function clearProjects() {
+		setSearchParams({ ...Object.fromEntries(searchParams), projects: '' })
 	}
 	if (!data || !options) return null
 	return (
@@ -55,7 +55,7 @@ export default function FilterForm() {
 						isMulti
 						options={options}
 						defaultValue={options.filter((option) =>
-							filter.includes(option.value),
+							projects.includes(option.value),
 						)}
 						onChange={(e) => setSelectedOption(e)}
 						styles={{
@@ -74,7 +74,7 @@ export default function FilterForm() {
 						type="button"
 						variant="ghost"
 						className="text-timesheet-red hover:bg-white hover:text-timesheet-red"
-						onClick={() => clearFilter()}
+						onClick={() => clearProjects()}
 					>
 						Hapus Filter
 					</Button>
