@@ -1,12 +1,15 @@
 package rest
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 
 	"github.com/YudhistiraTA/hh-timesheet/internal/logger"
 	"github.com/YudhistiraTA/hh-timesheet/internal/middlewares"
 	"github.com/YudhistiraTA/hh-timesheet/internal/response"
+	"github.com/YudhistiraTA/hh-timesheet/internal/validation"
+	"github.com/YudhistiraTA/hh-timesheet/model"
 	"github.com/YudhistiraTA/hh-timesheet/service/timesheet"
 	"github.com/go-chi/chi"
 	"go.uber.org/zap"
@@ -27,25 +30,42 @@ func TimesheetService(tr *timesheet.TimesheetService, log *zap.Logger) *Handler 
 func Timesheet(r chi.Router, log *zap.Logger, ts *timesheet.TimesheetService) {
 	h := TimesheetService(ts, log)
 	r.Use(middlewares.IgnoreRequest, middlewares.Timeout, middlewares.CORS, logger.NewLoggingMiddleware(log))
-	r.Get("/", h.root)
-	r.Get("/{id}", h.GetArticle)
+	r.Get("/user", h.GetUser)
+	r.Put("/user/{id}", h.PutUser)
 }
 
-func (h *Handler) root(w http.ResponseWriter, r *http.Request) {
-	response.WriteSuccess(w, nil, http.StatusOK)
+func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
+	user, err := h.ts.GetUser(r.Context())
+	if err != nil {
+		response.WriteError(w, err, "User not found", nil)
+		return
+	}
+	response.WriteSuccess(w, user, http.StatusOK)
 }
 
-func (h *Handler) GetArticle(w http.ResponseWriter, r *http.Request) {
-	articleID, err := strconv.Atoi(chi.URLParam(r, "id"))
+func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
+	userId, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
 		response.WriteError(w, response.ErrInvalidRequest, "Invalid request ID", nil)
 		return
 	}
-	article, err := h.ts.FindByID(r.Context(), articleID)
+	var user model.User
+	err = json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		response.WriteError(w, err, "Article not found", nil)
+		response.WriteError(w, response.ErrInvalidRequest, "Invalid request body", nil)
+		return
+	}
+	validationError := validation.ValidateStruct(user)
+	if validationError != nil {
+		response.WriteError(w, response.ErrInvalidRequest, "Invalid request body", validationError)
 		return
 	}
 
-	response.WriteSuccess(w, article, http.StatusOK)
+	err = h.ts.PutUser(r.Context(), userId, &user)
+	if err != nil {
+		response.WriteError(w, err, "Failed to update user", nil)
+		return
+	}
+
+	response.WriteSuccess(w, nil, http.StatusOK)
 }

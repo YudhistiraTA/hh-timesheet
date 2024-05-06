@@ -1,11 +1,21 @@
 package model
 
-type Timesheet struct {
+type User struct {
+	ID   int    `json:"id,omitempty"`
+	Name string `json:"name,omitempty" validate:"required,min=1"`
+	Rate int    `json:"rate,omitempty" validate:"required,min=1"`
+}
+
+type Project struct {
+	ID   int    `json:"id,omitempty"`
+	Name string `json:"name,omitempty" validate:"required,min=1"`
+}
+
+type Activity struct {
 	ID        int    `json:"id,omitempty"`
-	Title     string `json:"title,omitempty" validate:"required,min=20"`
-	Content   string `json:"content,omitempty" validate:"required,min=200"`
-	Category  string `json:"category,omitempty" validate:"required,min=3"`
-	CreatedAt string `json:"created_at,omitempty"`
-	UpdatedAt string `json:"updated_at,omitempty"`
-	Status    string `json:"status,omitempty" validate:"required,oneof=Publish Draft Trash"`
+	Name      string `json:"name,omitempty" validate:"required,min=1"`
+	DateStart string `json:"date_start,omitempty" validate:"required,min=1"`
+	DateEnd   string `json:"date_end,omitempty" validate:"required,min=1"`
+	ProjectID int    `json:"project_id,omitempty" validate:"required,min=1"`
+	UserID    int    `json:"user_id,omitempty" validate:"required,min=1"`
 }

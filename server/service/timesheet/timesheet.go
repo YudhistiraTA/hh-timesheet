@@ -7,7 +7,8 @@ import (
 )
 
 type TimesheetRepository interface {
-	FindByID(ctx context.Context, id int) (model.Timesheet, error)
+	GetUser(ctx context.Context) (model.User, error)
+	PutUser(ctx context.Context, id int, user *model.User) error
 }
 
 type TimesheetService struct {
@@ -18,6 +19,10 @@ func NewTimesheetService(repo TimesheetRepository) *TimesheetService {
 	return &TimesheetService{Repo: repo}
 }
 
-func (s *TimesheetService) FindByID(ctx context.Context, id int) (model.Timesheet, error) {
-	return s.Repo.FindByID(ctx, id)
+func (s *TimesheetService) GetUser(ctx context.Context) (model.User, error) {
+	return s.Repo.GetUser(ctx)
+}
+
+func (s *TimesheetService) PutUser(ctx context.Context, id int, user *model.User) error {
+	return s.Repo.PutUser(ctx, id, user)
 }
