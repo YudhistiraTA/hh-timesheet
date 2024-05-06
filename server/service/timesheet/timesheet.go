@@ -9,6 +9,7 @@ import (
 type TimesheetRepository interface {
 	GetUser(ctx context.Context) (model.User, error)
 	PutUser(ctx context.Context, id int, user *model.User) error
+	GetProjects(ctx context.Context) ([]model.Project, error)
 }
 
 type TimesheetService struct {
@@ -25,4 +26,8 @@ func (s *TimesheetService) GetUser(ctx context.Context) (model.User, error) {
 
 func (s *TimesheetService) PutUser(ctx context.Context, id int, user *model.User) error {
 	return s.Repo.PutUser(ctx, id, user)
+}
+
+func (s *TimesheetService) GetProjects(ctx context.Context) ([]model.Project, error) {
+	return s.Repo.GetProjects(ctx)
 }

@@ -32,6 +32,7 @@ func Timesheet(r chi.Router, log *zap.Logger, ts *timesheet.TimesheetService) {
 	r.Use(middlewares.IgnoreRequest, middlewares.Timeout, middlewares.CORS, logger.NewLoggingMiddleware(log))
 	r.Get("/user", h.GetUser)
 	r.Put("/user/{id}", h.PutUser)
+	r.Get("/projects", h.GetProjects)
 }
 
 func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
@@ -68,4 +69,13 @@ func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.WriteSuccess(w, nil, http.StatusOK)
+}
+
+func (h *Handler) GetProjects(w http.ResponseWriter, r *http.Request) {
+	projects, err := h.ts.GetProjects(r.Context())
+	if err != nil {
+		response.WriteError(w, err, "Projects not found", nil)
+		return
+	}
+	response.WriteSuccess(w, projects, http.StatusOK)
 }

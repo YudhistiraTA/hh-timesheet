@@ -38,3 +38,27 @@ func (r *TimesheetRepository) PutUser(ctx context.Context, id int, user *model.U
 
 	return
 }
+
+func (r *TimesheetRepository) GetProjects(ctx context.Context) (res []model.Project, err error) {
+	query := "SELECT id, name FROM projects"
+	stmt, err := r.DB.PrepareContext(ctx, query)
+	if err != nil {
+		return []model.Project{}, err
+	}
+	rows, err := stmt.QueryContext(ctx)
+	if err != nil {
+		return []model.Project{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var project model.Project
+		err = rows.Scan(&project.ID, &project.Name)
+		if err != nil {
+			return []model.Project{}, err
+		}
+		res = append(res, project)
+	}
+
+	return
+}
