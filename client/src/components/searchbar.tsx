@@ -37,7 +37,7 @@ export default function Searchbar() {
 				</DialogTrigger>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>Filter</DialogTitle>
+						<DialogTitle className='font-bold'>Filter</DialogTitle>
 					</DialogHeader>
 					<FilterForm />
 				</DialogContent>

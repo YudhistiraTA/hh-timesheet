@@ -72,6 +72,11 @@
 	}
 	body {
 		@apply bg-background text-foreground;
-    @apply font-nunito;
+		@apply font-nunito;
 	}
+}
+
+input[type='time']::-webkit-calendar-picker-indicator {
+	background: none;
+	display: none;
 }

@@ -1,5 +1,5 @@
 'use client'
-import { useReducer } from 'react'
+import { ReactElement, useReducer } from 'react'
 import {
 	FormControl,
 	FormField,
@@ -18,6 +18,8 @@ type TextInputProps = {
 	placeholder: string
 	labelClassName?: string
 	inputClassName?: string
+	startAdornment?: ReactElement
+	endAdornment?: ReactElement
 }
 
 export default function CurrencyInput(props: TextInputProps) {
@@ -60,6 +62,8 @@ export default function CurrencyInput(props: TextInputProps) {
 									handleChange(_change, ev.target.value)
 								}}
 								value={value}
+								startAdornment={props.startAdornment}
+								endAdornment={props.endAdornment}
 							/>
 						</FormControl>
 						<FormMessage />

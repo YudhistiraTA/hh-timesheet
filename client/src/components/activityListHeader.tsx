@@ -1,13 +1,8 @@
 import Searchbar from '@/components/searchbar'
 import { cn } from '@/lib/utils'
 import { PlusCircle } from 'lucide-react'
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from '@/components/ui/dialog'
+import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import ActivityForm from '@/components/activityForm'
 
 interface ActivityListHeaderProps
 	extends Partial<React.HTMLAttributes<HTMLDivElement>> {}
@@ -23,12 +18,7 @@ export default function ActivityListHeader({
 						<PlusCircle height={20} />
 						Tambah Kegiatan
 					</DialogTrigger>
-					<DialogContent>
-						<DialogHeader>
-							<DialogTitle>Filter</DialogTitle>
-						</DialogHeader>
-						hi
-					</DialogContent>
+					<ActivityForm />
 				</Dialog>
 			</div>
 			<div className="flex gap-4 items-center">

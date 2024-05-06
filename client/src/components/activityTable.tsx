@@ -106,7 +106,7 @@ const columns: ColumnDef<Activity>[] = [
 		),
 	},
 	{
-		accessorKey: 'time_start',
+		accessorKey: 'id',
 		header: ({ column }) => (
 			<Button
 				variant="ghost"

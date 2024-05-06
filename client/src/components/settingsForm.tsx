@@ -82,6 +82,7 @@ export function SettingsForm({ user }: { user: User }) {
 					labelClassName="opacity-80"
 					name="rate"
 					placeholder="Rate"
+					endAdornment={<span className="text-gray-400">/jam</span>}
 				/>
 				<div className="flex w-full justify-center gap-4">
 					<Button
