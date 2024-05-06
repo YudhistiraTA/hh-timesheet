@@ -47,8 +47,11 @@ export default function FilterForm() {
 	if (!data || !options) return null
 	return (
 		<>
-			<div className="border-t">
-				<div>
+			<div className="border-t pt-6">
+				<div className="flex flex-col gap-1">
+					<p className="text-sm text-muted-foreground">
+						Proyek <span className="text-timesheet-red">*</span>
+					</p>
 					<Select
 						closeMenuOnSelect={false}
 						components={animatedComponents}
@@ -68,7 +71,7 @@ export default function FilterForm() {
 					/>
 				</div>
 			</div>
-			<DialogFooter>
+			<DialogFooter className='mt-2 pt-4 border-t'>
 				<DialogClose asChild>
 					<Button
 						type="button"
