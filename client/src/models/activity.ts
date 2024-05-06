@@ -9,6 +9,7 @@ export const ActivitySchema = z.object({
 	time_end: z.string().min(1, 'Time end is required'),
 	project_id: z.number().min(1, 'Project is required'),
 	project_name: z.string().nullish(),
+	duration: z.string().nullish(),
 })
 
 export type Activity = z.infer<typeof ActivitySchema>

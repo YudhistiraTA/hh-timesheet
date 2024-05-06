@@ -1,7 +1,9 @@
 import {
 	ColumnDef,
+	SortingState,
 	flexRender,
 	getCoreRowModel,
+	getSortedRowModel,
 	useReactTable,
 } from '@tanstack/react-table'
 
@@ -13,8 +15,11 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table'
+import { useState } from 'react'
+import { cn } from '@/lib/utils'
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData, TValue>
+	extends Partial<React.HTMLAttributes<HTMLDivElement>> {
 	columns: ColumnDef<TData, TValue>[]
 	data: TData[]
 	emptyMessage?: string
@@ -24,15 +29,21 @@ export function DataTable<TData, TValue>({
 	columns,
 	data,
 	emptyMessage,
+	...props
 }: DataTableProps<TData, TValue>) {
+	const [sorting, setSorting] = useState<SortingState>([])
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
+		onSortingChange: setSorting,
+		getSortedRowModel: getSortedRowModel(),
+		state: {
+			sorting,
+		},
 	})
-
 	return (
-		<div className="rounded-md border">
+		<div {...props} className={cn('rounded-md border', props.className)}>
 			<Table>
 				<TableHeader>
 					{table.getHeaderGroups().map((headerGroup) => (

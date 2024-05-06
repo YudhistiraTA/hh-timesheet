@@ -1,19 +1,45 @@
+import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/ui/dataTable'
 import { extendedDayjs } from '@/lib/utils'
 import { Activity } from '@/models/activity'
 import { ColumnDef } from '@tanstack/react-table'
+import { ChevronsUpDown } from 'lucide-react'
 const columns: ColumnDef<Activity>[] = [
 	{
 		accessorKey: 'name',
-		header: 'Judul Kegiatan',
+		header: ({ column }) => (
+			<Button
+				variant="ghost"
+				onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+			>
+				Email
+				<ChevronsUpDown className="ml-2 h-4 w-4" />
+			</Button>
+		),
 	},
 	{
 		accessorKey: 'project_name',
-		header: 'Nama Proyek',
+		header: ({ column }) => (
+			<Button
+				variant="ghost"
+				onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+			>
+				Nama Proyek
+				<ChevronsUpDown className="ml-2 h-4 w-4" />
+			</Button>
+		),
 	},
 	{
 		accessorKey: 'date_start',
-		header: 'Tanggal Mulai',
+		header: ({ column }) => (
+			<Button
+				variant="ghost"
+				onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+			>
+				Tanggal Mulai
+				<ChevronsUpDown className="ml-2 h-4 w-4" />
+			</Button>
+		),
 		cell: (cell) => (
 			<div>
 				{extendedDayjs(cell.getValue() as string)
@@ -24,7 +50,15 @@ const columns: ColumnDef<Activity>[] = [
 	},
 	{
 		accessorKey: 'date_end',
-		header: 'Tanggal Berakhir',
+		header: ({ column }) => (
+			<Button
+				variant="ghost"
+				onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+			>
+				Tanggal Berakhir
+				<ChevronsUpDown className="ml-2 h-4 w-4" />
+			</Button>
+		),
 		cell: (cell) => (
 			<div>
 				{extendedDayjs(cell.getValue() as string)
@@ -35,7 +69,15 @@ const columns: ColumnDef<Activity>[] = [
 	},
 	{
 		accessorKey: 'time_start',
-		header: 'Waktu Mulai',
+		header: ({ column }) => (
+			<Button
+				variant="ghost"
+				onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+			>
+				Waktu Mulai
+				<ChevronsUpDown className="ml-2 h-4 w-4" />
+			</Button>
+		),
 		cell: (cell) => (
 			<div>
 				{extendedDayjs(cell.getValue() as string, 'HH:mm:ss')
@@ -46,7 +88,15 @@ const columns: ColumnDef<Activity>[] = [
 	},
 	{
 		accessorKey: 'time_end',
-		header: 'Waktu Berakhir',
+		header: ({ column }) => (
+			<Button
+				variant="ghost"
+				onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+			>
+				Waktu Berakhir
+				<ChevronsUpDown className="ml-2 h-4 w-4" />
+			</Button>
+		),
 		cell: (cell) => (
 			<div>
 				{extendedDayjs(cell.getValue() as string, 'HH:mm:ss')
@@ -56,7 +106,16 @@ const columns: ColumnDef<Activity>[] = [
 		),
 	},
 	{
-		header: 'Durasi',
+		accessorKey: 'time_start',
+		header: ({ column }) => (
+			<Button
+				variant="ghost"
+				onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+			>
+				Durasi
+				<ChevronsUpDown className="ml-2 h-4 w-4" />
+			</Button>
+		),
 		cell: ({ row }) => {
 			const startTime = extendedDayjs(row.original.time_start, 'HH:mm:ss')
 			const start = extendedDayjs(row.original.date_start)
@@ -67,7 +126,7 @@ const columns: ColumnDef<Activity>[] = [
 				.add(endTime.hour(), 'hour')
 				.add(endTime.minute(), 'minute')
 			const day = end.diff(start, 'd')
-			const hour = end.diff(start, 'h')
+			const hour = end.diff(start, 'h') % 24
 			const minute = end.diff(start, 'm') % 60
 			return (
 				<div>
@@ -83,14 +142,19 @@ const columns: ColumnDef<Activity>[] = [
 	},
 ]
 
+interface ActivityTableProps
+	extends Partial<React.HTMLAttributes<HTMLDivElement>> {
+	activities: Activity[] | undefined
+}
+
 export default function ActivityTable({
 	activities,
-}: {
-	activities: Activity[] | undefined
-}) {
+	...props
+}: ActivityTableProps) {
 	if (!activities) activities = []
 	return (
 		<DataTable
+			{...props}
 			columns={columns}
 			data={activities}
 			emptyMessage="Belum ada kegiatan"
