@@ -14,16 +14,16 @@
 
 Make sure MySQL is installed. You may refer to [this documentation](https://dev.mysql.com/doc/refman/8.0/en/installing.html) on how to install MySQL locally. The MySQL version used to develop this app is 8.0.36
 
-Create the article database using the following command
+Create the timesheet database using the following command
 ```
-mysql -u <USER> -p -e 'CREATE DATABASE IF NOT EXISTS article;'
+mysql -u <USER> -p -e 'CREATE DATABASE IF NOT EXISTS timesheet;'
 ```
 
 I used [golang-migrate](https://github.com/golang-migrate/migrate) as the migration tool. You may follow [this documentation](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate) on how to install it.
 
 After installation, run the migration file(s) using the following command
 ```
-migrate -path ./server/database/migrations -database "mysql://<USER>:<PASSWORD>@tcp(<host>:<port>)/article" -verbose up
+migrate -path ./server/database/migrations -database "mysql://<USER>:<PASSWORD>@tcp(<host>:<port>)/timesheet" -verbose up
 ```
 
 However, if you prefer to run the sql query manually, you may use the `./server/database/migrations/000001_init_mg.up.sql` file.
