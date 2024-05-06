@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/YudhistiraTA/hh-timesheet/internal/logger"
 	"github.com/YudhistiraTA/hh-timesheet/internal/middlewares"
@@ -33,6 +34,7 @@ func Timesheet(r chi.Router, log *zap.Logger, ts *timesheet.TimesheetService) {
 	r.Get("/user", h.GetUser)
 	r.Put("/user/{id}", h.PutUser)
 	r.Get("/projects", h.GetProjects)
+	r.Get("/activities", h.GetActivities)
 }
 
 func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
@@ -78,4 +80,15 @@ func (h *Handler) GetProjects(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response.WriteSuccess(w, projects, http.StatusOK)
+}
+
+func (h *Handler) GetActivities(w http.ResponseWriter, r *http.Request) {
+	projects := strings.Split(r.URL.Query().Get("projects"), ",")
+	search := r.URL.Query().Get("search")
+	activities, err := h.ts.GetActivities(r.Context(), projects, search)
+	if err != nil {
+		response.WriteError(w, err, "Activities not found", nil)
+		return
+	}
+	response.WriteSuccess(w, activities, http.StatusOK)
 }
