@@ -83,7 +83,11 @@ func (h *Handler) GetProjects(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetActivities(w http.ResponseWriter, r *http.Request) {
-	projects := strings.Split(r.URL.Query().Get("projects"), ",")
+	projectsParam := r.URL.Query().Get("projects")
+	var projects []string
+	if projectsParam != "" {
+		projects = strings.Split(projectsParam, ",")
+	}
 	search := r.URL.Query().Get("search")
 	activities, err := h.ts.GetActivities(r.Context(), projects, search)
 	if err != nil {
