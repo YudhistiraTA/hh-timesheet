@@ -37,6 +37,7 @@ func Timesheet(r chi.Router, log *zap.Logger, ts *timesheet.TimesheetService) {
 	r.Get("/projects", h.GetProjects)
 	r.Get("/activities", h.GetActivities)
 	r.Post("/activities", h.CreateActivity)
+	r.Put("/activities/{id}", h.UpdateActivity)
 	r.Delete("/activities/{id}", h.DeleteActivity)
 }
 

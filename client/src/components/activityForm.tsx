@@ -1,6 +1,7 @@
 import getProjects from '@/api/getProjects'
 import getUser from '@/api/getUser'
 import postActivity from '@/api/postActivity'
+import putActivity from '@/api/putActivity'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -46,14 +47,18 @@ export default function ActivityForm({
 		time_end: '',
 		name: '',
 	},
-	setDialogOpen
+	setDialogOpen,
 }: {
 	defaultValues?: Partial<Activity>
-	setDialogOpen: Dispatch<SetStateAction<boolean>>
+	setDialogOpen?: Dispatch<SetStateAction<boolean>>
 }) {
 	const form = useForm<Activity>({
 		resolver: zodResolver(ActivitySchema),
-		defaultValues,
+		defaultValues: {
+			...defaultValues,
+			date_start: new Date(defaultValues.date_start || new Date()),
+			date_end: new Date(defaultValues.date_end || new Date()),
+		},
 	})
 	const { data } = useQuery({
 		queryKey: 'projects',
@@ -63,14 +68,14 @@ export default function ActivityForm({
 		queryKey: 'user',
 		queryFn: () => getUser(),
 	})
-	
+
 	const queryClient = useQueryClient()
 	const activityMutation = useMutation({
-		mutationFn: postActivity,
+		mutationFn: defaultValues.id ? putActivity : postActivity,
 		onSuccess: () => {
 			queryClient.invalidateQueries('activities')
 			Swal.fire({
-				title: 'Activity Created!',
+				title: `Activity ${defaultValues.id ? 'Updated' : 'Created'}!`,
 				icon: 'success',
 				timer: 2000,
 				timerProgressBar: true,
@@ -79,7 +84,7 @@ export default function ActivityForm({
 					clearInterval(2000)
 				},
 			})
-			setDialogOpen(false)
+			if (setDialogOpen) setDialogOpen(false)
 		},
 		onError: () => {
 			Swal.fire({
@@ -96,12 +101,14 @@ export default function ActivityForm({
 		},
 	})
 	function onSubmit(data: Activity) {
-		activityMutation.mutate({...data, user_id: user?.id})
+		activityMutation.mutate({ ...data, user_id: user?.id })
 	}
 	return (
 		<DialogContent className="max-w-none w-3/5">
 			<DialogHeader>
-				<DialogTitle className="font-bold">Tambah Kegiatan Baru</DialogTitle>
+				<DialogTitle className="font-bold">
+					{defaultValues.id ? 'Ubah Kegiatan' : 'Tambah Kegiatan Baru'}
+				</DialogTitle>
 			</DialogHeader>
 			<div className="border-t pt-6">
 				<Form {...form}>
@@ -283,7 +290,10 @@ export default function ActivityForm({
 										<SelectContent>
 											{data
 												? data.map((project) => (
-														<SelectItem key={project.id} value={String(project.id)}>
+														<SelectItem
+															key={project.id}
+															value={String(project.id)}
+														>
 															{project.name}
 														</SelectItem>
 												  ))

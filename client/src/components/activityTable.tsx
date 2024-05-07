@@ -1,10 +1,12 @@
 import deleteActivity from '@/api/deleteActivity'
+import ActivityForm from '@/components/activityForm'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/ui/dataTable'
+import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { extendedDayjs } from '@/lib/utils'
 import { Activity } from '@/models/activity'
 import { ColumnDef } from '@tanstack/react-table'
-import { ChevronsUpDown, Trash } from 'lucide-react'
+import { ChevronsUpDown, PencilLine, Trash } from 'lucide-react'
 import { useMemo } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
 
@@ -162,9 +164,17 @@ export default function ActivityTable({
 				header: 'Aksi',
 				cell: ({ row }) => (
 					<div className="flex gap-1">
+						<Dialog >
+							<DialogTrigger className="text-yellow-600 rounded-lg border p-1.5 hover:bg-timesheet-background">
+								<PencilLine height={16} />
+							</DialogTrigger>
+							<ActivityForm
+								defaultValues={row.original}
+							/>
+						</Dialog>
 						<Button
 							variant="ghost"
-							className="text-timesheet-red"
+							className="text-timesheet-red border hover:text-timesheet-red hover:bg-timesheet-background p-1.5"
 							onClick={() => deleteMutation.mutate(row.getValue('id'))}
 						>
 							<Trash height={16} />
