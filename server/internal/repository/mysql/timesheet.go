@@ -105,3 +105,14 @@ func (r *TimesheetRepository) GetActivities(ctx context.Context, projects []stri
 
 	return
 }
+
+func (r *TimesheetRepository) CreateActivity(ctx context.Context, activity *model.Activity) (err error) {
+	query := "INSERT INTO activities (name, date_start, date_end, time_start, time_end, project_id, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)"
+	stmt, err := r.DB.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+	_, err = stmt.ExecContext(ctx, activity.Name, activity.DateStart, activity.DateEnd, activity.TimeStart, activity.TimeEnd, activity.ProjectID, activity.UserID)
+
+	return
+}

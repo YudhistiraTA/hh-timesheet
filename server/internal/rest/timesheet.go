@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/YudhistiraTA/hh-timesheet/internal/helper"
 	"github.com/YudhistiraTA/hh-timesheet/internal/logger"
 	"github.com/YudhistiraTA/hh-timesheet/internal/middlewares"
 	"github.com/YudhistiraTA/hh-timesheet/internal/response"
@@ -35,11 +36,13 @@ func Timesheet(r chi.Router, log *zap.Logger, ts *timesheet.TimesheetService) {
 	r.Put("/user/{id}", h.PutUser)
 	r.Get("/projects", h.GetProjects)
 	r.Get("/activities", h.GetActivities)
+	r.Post("/activities", h.CreateActivity)
 }
 
 func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	user, err := h.ts.GetUser(r.Context())
 	if err != nil {
+		h.log.Error("Failed to get user", zap.Error(err))
 		response.WriteError(w, err, "User not found", nil)
 		return
 	}
@@ -49,12 +52,14 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 	userId, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
+		h.log.Error("Invalid request ID", zap.Error(err))
 		response.WriteError(w, response.ErrInvalidRequest, "Invalid request ID", nil)
 		return
 	}
 	var user model.User
 	err = json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
+		h.log.Error("Invalid request body", zap.Error(err))
 		response.WriteError(w, response.ErrInvalidRequest, "Invalid request body", nil)
 		return
 	}
@@ -66,6 +71,7 @@ func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 
 	err = h.ts.PutUser(r.Context(), userId, &user)
 	if err != nil {
+		h.log.Error("Failed to update user", zap.Error(err))
 		response.WriteError(w, err, "Failed to update user", nil)
 		return
 	}
@@ -76,6 +82,7 @@ func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetProjects(w http.ResponseWriter, r *http.Request) {
 	projects, err := h.ts.GetProjects(r.Context())
 	if err != nil {
+		h.log.Error("Failed to get projects", zap.Error(err))
 		response.WriteError(w, err, "Projects not found", nil)
 		return
 	}
@@ -91,8 +98,44 @@ func (h *Handler) GetActivities(w http.ResponseWriter, r *http.Request) {
 	search := r.URL.Query().Get("search")
 	activities, err := h.ts.GetActivities(r.Context(), projects, search)
 	if err != nil {
+		h.log.Error("Failed to get activities", zap.Error(err))
 		response.WriteError(w, err, "Activities not found", nil)
 		return
 	}
 	response.WriteSuccess(w, activities, http.StatusOK)
+}
+
+func (h *Handler) CreateActivity(w http.ResponseWriter, r *http.Request) {
+	var activity model.Activity
+	err := json.NewDecoder(r.Body).Decode(&activity)
+	if err != nil {
+		h.log.Error("Invalid request body", zap.Error(err))
+		response.WriteError(w, response.ErrInvalidRequest, "Invalid request body", nil)
+		return
+	}
+	activity.DateStart, err = helper.TimeFormat(activity.DateStart)
+	if err != nil {
+		h.log.Error("Invalid date format", zap.Error(err))
+		response.WriteError(w, response.ErrInvalidRequest, "Invalid date format", nil)
+		return
+	}
+	activity.DateEnd, err = helper.TimeFormat(activity.DateEnd)
+	if err != nil {
+		h.log.Error("Invalid date format", zap.Error(err))
+		response.WriteError(w, response.ErrInvalidRequest, "Invalid date format", nil)
+		return
+	}
+	validationError := validation.ValidateStruct(activity)
+	if validationError != nil {
+		response.WriteError(w, response.ErrInvalidRequest, "Invalid request body", validationError)
+		return
+	}
+	err = h.ts.CreateActivity(r.Context(), &activity)
+	if err != nil {
+		h.log.Error("Failed to create activity", zap.Error(err))
+		response.WriteError(w, err, "Failed to create activity", nil)
+		return
+	}
+
+	response.WriteSuccess(w, nil, http.StatusCreated)
 }

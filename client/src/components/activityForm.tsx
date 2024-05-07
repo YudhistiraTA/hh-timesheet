@@ -1,4 +1,6 @@
 import getProjects from '@/api/getProjects'
+import getUser from '@/api/getUser'
+import postActivity from '@/api/postActivity'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -33,8 +35,10 @@ import { cn, extendedDayjs } from '@/lib/utils'
 import { Activity, ActivitySchema } from '@/models/activity'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon, Clock } from 'lucide-react'
+import { Dispatch, SetStateAction } from 'react'
 import { useForm } from 'react-hook-form'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import Swal from 'sweetalert2'
 
 export default function ActivityForm({
 	defaultValues = {
@@ -42,8 +46,10 @@ export default function ActivityForm({
 		time_end: '',
 		name: '',
 	},
+	setDialogOpen
 }: {
 	defaultValues?: Partial<Activity>
+	setDialogOpen: Dispatch<SetStateAction<boolean>>
 }) {
 	const form = useForm<Activity>({
 		resolver: zodResolver(ActivitySchema),
@@ -53,6 +59,45 @@ export default function ActivityForm({
 		queryKey: 'projects',
 		queryFn: () => getProjects(),
 	})
+	const { data: user } = useQuery({
+		queryKey: 'user',
+		queryFn: () => getUser(),
+	})
+	
+	const queryClient = useQueryClient()
+	const userMutation = useMutation({
+		mutationFn: postActivity,
+		onSuccess: () => {
+			queryClient.invalidateQueries('activities')
+			Swal.fire({
+				title: 'Activity Created!',
+				icon: 'success',
+				timer: 2000,
+				timerProgressBar: true,
+				showConfirmButton: false,
+				willClose: () => {
+					clearInterval(2000)
+				},
+			})
+			setDialogOpen(false)
+		},
+		onError: () => {
+			Swal.fire({
+				title: 'Error!',
+				text: 'Something went wrong',
+				icon: 'error',
+				timer: 2000,
+				timerProgressBar: true,
+				showConfirmButton: false,
+				willClose: () => {
+					clearInterval(2000)
+				},
+			})
+		},
+	})
+	function onSubmit(data: Activity) {
+		userMutation.mutate({...data, user_id: user?.id})
+	}
 	return (
 		<DialogContent className="max-w-none w-3/5">
 			<DialogHeader>
@@ -265,7 +310,7 @@ export default function ActivityForm({
 				<Button
 					type="button"
 					variant="destructive"
-					onClick={form.handleSubmit(console.log)}
+					onClick={form.handleSubmit(onSubmit)}
 				>
 					Simpan
 				</Button>
