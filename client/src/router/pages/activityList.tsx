@@ -10,8 +10,11 @@ import { useSearchParams } from 'react-router-dom'
 
 export default function ActivityList() {
 	const [searchParams] = useSearchParams()
-	const search = useMemo(()=>searchParams.get('search') || '', [searchParams])
-	const projects = useMemo(()=>searchParams.get('projects') || '', [searchParams])
+	const search = useMemo(() => searchParams.get('search') || '', [searchParams])
+	const projects = useMemo(
+		() => searchParams.get('projects') || '',
+		[searchParams],
+	)
 	const { data: user } = useQuery({
 		queryKey: 'user',
 		queryFn: () => getUser(),
@@ -34,7 +37,7 @@ export default function ActivityList() {
 					activities={activities}
 				/>
 				<ActivityTableSummary
-					className="mx-6 p-4 border rounded-b text-timesheet-blue"
+					className="mx-6 p-4 border rounded-b text-timesheet-blue mb-4"
 					user={user}
 					activities={activities}
 				/>

@@ -12,6 +12,8 @@ type TimesheetRepository interface {
 	GetProjects(ctx context.Context) ([]model.Project, error)
 	GetActivities(ctx context.Context, projects []string, search string) ([]model.Activity, error)
 	CreateActivity(ctx context.Context, activity *model.Activity) (err error)
+	UpdateActivity(ctx context.Context, id int, activity *model.Activity) (err error)
+	DeleteActivity(ctx context.Context, id int) (err error)
 }
 
 type TimesheetService struct {
@@ -40,4 +42,12 @@ func (s *TimesheetService) GetActivities(ctx context.Context, projects []string,
 
 func (s *TimesheetService) CreateActivity(ctx context.Context, activity *model.Activity) error {
 	return s.Repo.CreateActivity(ctx, activity)
+}
+
+func (s *TimesheetService) UpdateActivity(ctx context.Context, id int, activity *model.Activity) error {
+	return s.Repo.UpdateActivity(ctx, id, activity)
+}
+
+func (s *TimesheetService) DeleteActivity(ctx context.Context, id int) error {
+	return s.Repo.DeleteActivity(ctx, id)
 }

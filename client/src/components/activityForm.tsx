@@ -65,7 +65,7 @@ export default function ActivityForm({
 	})
 	
 	const queryClient = useQueryClient()
-	const userMutation = useMutation({
+	const activityMutation = useMutation({
 		mutationFn: postActivity,
 		onSuccess: () => {
 			queryClient.invalidateQueries('activities')
@@ -96,7 +96,7 @@ export default function ActivityForm({
 		},
 	})
 	function onSubmit(data: Activity) {
-		userMutation.mutate({...data, user_id: user?.id})
+		activityMutation.mutate({...data, user_id: user?.id})
 	}
 	return (
 		<DialogContent className="max-w-none w-3/5">

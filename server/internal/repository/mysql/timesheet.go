@@ -116,3 +116,25 @@ func (r *TimesheetRepository) CreateActivity(ctx context.Context, activity *mode
 
 	return
 }
+
+func (r *TimesheetRepository) UpdateActivity(ctx context.Context, id int, activity *model.Activity) (err error) {
+	query := "UPDATE activities SET name = ?, date_start = ?, date_end = ?, time_start = ?, time_end = ?, project_id = ? WHERE id = ?"
+	stmt, err := r.DB.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+	_, err = stmt.ExecContext(ctx, activity.Name, activity.DateStart, activity.DateEnd, activity.TimeStart, activity.TimeEnd, activity.ProjectID, id)
+
+	return
+}
+
+func (r *TimesheetRepository) DeleteActivity(ctx context.Context, id int) (err error) {
+	query := "DELETE FROM activities WHERE id = ?"
+	stmt, err := r.DB.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+	_, err = stmt.ExecContext(ctx, id)
+
+	return
+}
