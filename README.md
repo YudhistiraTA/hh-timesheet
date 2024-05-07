@@ -6,7 +6,8 @@
 
 1. `cd` into the client folder
 2. Do `npm i` to install dependencies
-3. Run `npm run dev` to start development server
+3. Create a `.env` file. Refer to `.env.example`
+4. Run `npm run dev` to start development server
 
 ### Server
 
@@ -44,6 +45,8 @@ air
 
 ## Production Environment
 
-Make sure [docker and docker-compose is installed](https://docs.docker.com/compose/install/) and do `docker-compose up --build`
+Make sure [docker and docker-compose is installed](https://docs.docker.com/compose/install/) 
+
+Create a `.env` file that is the exact same as the one in `./server/.env` on the root folder and do `docker-compose up --build`
 
 That should create MySQL, server, and client containers.
