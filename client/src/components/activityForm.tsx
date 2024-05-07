@@ -1,3 +1,4 @@
+import getProjects from '@/api/getProjects'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -21,16 +22,25 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from '@/components/ui/popover'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select'
 import { cn, extendedDayjs } from '@/lib/utils'
 import { Activity, ActivitySchema } from '@/models/activity'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CalendarIcon, Clock } from 'lucide-react'
 import { useForm } from 'react-hook-form'
+import { useQuery } from 'react-query'
 
 export default function ActivityForm({
 	defaultValues = {
 		time_start: '',
 		time_end: '',
+		name: '',
 	},
 }: {
 	defaultValues?: Partial<Activity>
@@ -38,6 +48,10 @@ export default function ActivityForm({
 	const form = useForm<Activity>({
 		resolver: zodResolver(ActivitySchema),
 		defaultValues,
+	})
+	const { data } = useQuery({
+		queryKey: 'projects',
+		queryFn: () => getProjects(),
 	})
 	return (
 		<DialogContent className="max-w-none w-3/5">
@@ -199,6 +213,38 @@ export default function ActivityForm({
 									<FormControl>
 										<Input {...field} />
 									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="project_id"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="text-muted-foreground">
+										Nama Proyek
+										<span className="text-timesheet-red"> *</span>
+									</FormLabel>
+									<Select
+										onValueChange={(e) => field.onChange(+e)}
+										defaultValue={String(field.value)}
+									>
+										<FormControl>
+											<SelectTrigger>
+												<SelectValue placeholder="Select a project" />
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{data
+												? data.map((project) => (
+														<SelectItem key={project.id} value={String(project.id)}>
+															{project.name}
+														</SelectItem>
+												  ))
+												: null}
+										</SelectContent>
+									</Select>
 									<FormMessage />
 								</FormItem>
 							)}
