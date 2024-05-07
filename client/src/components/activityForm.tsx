@@ -2,6 +2,7 @@ import getProjects from '@/api/getProjects'
 import getUser from '@/api/getUser'
 import postActivity from '@/api/postActivity'
 import putActivity from '@/api/putActivity'
+import ProjectFormDialog from '@/components/projectFormDialog'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -28,7 +29,9 @@ import {
 import {
 	Select,
 	SelectContent,
+	SelectGroup,
 	SelectItem,
+	SelectLabel,
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
@@ -288,16 +291,21 @@ export default function ActivityForm({
 											</SelectTrigger>
 										</FormControl>
 										<SelectContent>
-											{data
-												? data.map((project) => (
-														<SelectItem
-															key={project.id}
-															value={String(project.id)}
-														>
-															{project.name}
-														</SelectItem>
-												  ))
-												: null}
+											<SelectGroup>
+												<SelectLabel className='w-full h-full p-0'>
+													<ProjectFormDialog />
+												</SelectLabel>
+												{data
+													? data.map((project) => (
+															<SelectItem
+																key={project.id}
+																value={String(project.id)}
+															>
+																{project.name}
+															</SelectItem>
+													  ))
+													: null}
+											</SelectGroup>
 										</SelectContent>
 									</Select>
 									<FormMessage />

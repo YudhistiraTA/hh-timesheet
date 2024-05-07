@@ -138,3 +138,14 @@ func (r *TimesheetRepository) DeleteActivity(ctx context.Context, id int) (err e
 
 	return
 }
+
+func (r *TimesheetRepository) PostProject(ctx context.Context, project *model.Project) (err error) {
+	query := "INSERT INTO projects (name) VALUES (?)"
+	stmt, err := r.DB.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+	_, err = stmt.ExecContext(ctx, project.Name)
+
+	return
+}

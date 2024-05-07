@@ -14,6 +14,7 @@ type TimesheetRepository interface {
 	CreateActivity(ctx context.Context, activity *model.Activity) (err error)
 	UpdateActivity(ctx context.Context, id int, activity *model.Activity) (err error)
 	DeleteActivity(ctx context.Context, id int) (err error)
+	PostProject(ctx context.Context, project *model.Project) (err error)
 }
 
 type TimesheetService struct {
@@ -50,4 +51,8 @@ func (s *TimesheetService) UpdateActivity(ctx context.Context, id int, activity 
 
 func (s *TimesheetService) DeleteActivity(ctx context.Context, id int) error {
 	return s.Repo.DeleteActivity(ctx, id)
+}
+
+func (s *TimesheetService) PostProject(ctx context.Context, project *model.Project) error {
+	return s.Repo.PostProject(ctx, project)
 }

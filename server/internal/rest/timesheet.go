@@ -35,6 +35,7 @@ func Timesheet(r chi.Router, log *zap.Logger, ts *timesheet.TimesheetService) {
 	r.Get("/user", h.GetUser)
 	r.Put("/user/{id}", h.PutUser)
 	r.Get("/projects", h.GetProjects)
+	r.Post("/projects", h.PostProject)
 	r.Get("/activities", h.GetActivities)
 	r.Post("/activities", h.CreateActivity)
 	r.Put("/activities/{id}", h.UpdateActivity)
@@ -198,4 +199,27 @@ func (h *Handler) DeleteActivity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.WriteSuccess(w, nil, http.StatusOK)
+}
+
+func (h *Handler) PostProject(w http.ResponseWriter, r *http.Request) {
+	var project model.Project
+	err := json.NewDecoder(r.Body).Decode(&project)
+	if err != nil {
+		h.log.Error("Invalid request body", zap.Error(err))
+		response.WriteError(w, response.ErrInvalidRequest, "Invalid request body", nil)
+		return
+	}
+	validationError := validation.ValidateStruct(project)
+	if validationError != nil {
+		response.WriteError(w, response.ErrInvalidRequest, "Invalid request body", validationError)
+		return
+	}
+	err = h.ts.PostProject(r.Context(), &project)
+	if err != nil {
+		h.log.Error("Failed to create project", zap.Error(err))
+		response.WriteError(w, err, "Failed to create project", nil)
+		return
+	}
+
+	response.WriteSuccess(w, nil, http.StatusCreated)
 }
